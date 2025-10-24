@@ -8,7 +8,6 @@ const Header = () => {
       <img className={`${style.logo}`} src={logo} alt="small react logo" />
       <div>
         <h1>Min Todo App</h1>
-        <p>Min første React app</p>
       </div>
       <img className={`${style.logo}`} src={logo} alt="small react logo" />
     </div>
