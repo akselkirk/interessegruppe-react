@@ -1,6 +1,6 @@
 import Header from "./components/header/Header";
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TodoList from "./components/todo_list/TodoList";
 import TodoMenu from "./components/todo_menu/TodoMenu";
 import BrukEffekt from "./components/eksempler_fra_gjennomgang/useeffect_/BrukEffekt";
@@ -121,6 +121,11 @@ function App() {
     setTodoLists(updatedLists);
     setFocusTodoList(todoLists[changeIndex]);
   };
+
+  useEffect(() => {
+    localStorage.setItem(`todolists`, JSON.stringify(todoLists));
+    localStorage.setItem(`focustodolist`, JSON.stringify(focusTodoList));
+  }, [todoLists, focusTodoList]);
 
   return (
     <div className="App">
