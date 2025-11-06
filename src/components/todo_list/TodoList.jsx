@@ -7,7 +7,7 @@ const TodoList = (props) => {
   return (
     <div className={styles.todolist}>
       <h1>{props.title}</h1>
-      <CreateTodo />
+      <CreateTodo addTodo={props.addTodo} />
       {props.todos.map((todo, i) => {
         return (
           <TodoItem

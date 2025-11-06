@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 
-const CreateTodo = () => {
+const CreateTodo = ({ addTodo }) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleTodoAdd = (e) => {
     e.preventDefault();
+    addTodo(inputValue);
+    setInputValue("");
   };
 
   return (
@@ -12,7 +14,9 @@ const CreateTodo = () => {
       <input
         placeholder="Todo description"
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={(e) => {
+          setInputValue(e.target.value);
+        }}
       />
       <button type="submit">Add todo</button>
     </form>
