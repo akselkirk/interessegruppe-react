@@ -99,18 +99,33 @@ function App() {
     },
   ]);
 
-  const [focusTodoList, setFocusTodoList] = useState(todoLists[0]);
+  // Lagrer bare ID-en, ikke hele objektet
+  const [focusedListId, setFocusedListId] = useState(() => {
+    const saved = localStorage.getItem("focusedListId");
+    return saved ? JSON.parse(saved) : 1;
+  });
 
+  // Finn den fokuserte listen fra todoLists
+  const focusedTodoList =
+    todoLists.find((list) => list.id === focusedListId) || todoLists[0];
+
+  // Toggle en todo
   const toggleTodo = (changeIndex) => {
-    setFocusTodoList({
-      title: focusTodoList.title,
-      focused: focusTodoList.focused,
-      todos: focusTodoList.todos.map((todo, i) =>
-        changeIndex === i ? { ...todo, checked: !todo.checked } : todo
-      ),
-    });
+    setTodoLists(
+      todoLists.map((list) =>
+        list.id === focusedListId
+          ? {
+              ...list,
+              todos: list.todos.map((todo, i) =>
+                i === changeIndex ? { ...todo, checked: !todo.checked } : todo
+              ),
+            }
+          : list
+      )
+    );
   };
 
+  // Bytt hvilken liste som er fokusert
   const handleTodoListChange = (changeIndex) => {
     const updatedLists = todoLists.map((todolist, i) => ({
       ...todolist,
@@ -118,13 +133,31 @@ function App() {
     }));
 
     setTodoLists(updatedLists);
-    setFocusTodoList(todoLists[changeIndex]);
+    setFocusedListId(todoLists[changeIndex].id);
   };
 
+  // Legg til en ny todo
+  const addTodo = (todoDescription) => {
+    setTodoLists(
+      todoLists.map((list) =>
+        list.id === focusedListId
+          ? {
+              ...list,
+              todos: [
+                ...list.todos,
+                { checked: false, todoDesc: todoDescription },
+              ],
+            }
+          : list
+      )
+    );
+  };
+
+  // Lagre til localStorage
   useEffect(() => {
-    localStorage.setItem(`todolists`, JSON.stringify(todoLists));
-    localStorage.setItem(`focustodolist`, JSON.stringify(focusTodoList));
-  }, [todoLists, focusTodoList]);
+    localStorage.setItem("todolists", JSON.stringify(todoLists));
+    localStorage.setItem("focusedListId", JSON.stringify(focusedListId));
+  }, [todoLists, focusedListId]);
 
   return (
     <div className="App">
@@ -147,9 +180,10 @@ function App() {
           handleTodoListChange={handleTodoListChange}
         />
         <TodoList
-          title={focusTodoList.title}
-          todos={focusTodoList.todos}
+          title={focusedTodoList.title}
+          todos={focusedTodoList.todos}
           toggleTodo={toggleTodo}
+          addTodo={addTodo}
         />
       </div>
     </div>
