@@ -1,22 +1,25 @@
 import React, { useState } from "react";
 
-const CreateTodo = () => {
-  const [showCreate, setShowCreate] = useState(false);
+const CreateTodo = ({ addTodo }) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleTodoAdd = (e) => {
+    e.preventDefault();
+    addTodo(inputValue);
+    setInputValue("");
+  };
 
   return (
-    <div>
-      {showCreate ? (
-        <>
-          <label>Todo</label>
-          <input type="text" />
-          <button>Add</button>
-
-          <button onClick={() => setShowCreate(!showCreate)}>Toggle add</button>
-        </>
-      ) : (
-        <button onClick={() => setShowCreate(!showCreate)}>Toggle add</button>
-      )}
-    </div>
+    <form onSubmit={handleTodoAdd}>
+      <input
+        placeholder="Todo description"
+        value={inputValue}
+        onChange={(e) => {
+          setInputValue(e.target.value);
+        }}
+      />
+      <button type="submit">Add todo</button>
+    </form>
   );
 };
 
