@@ -5,6 +5,12 @@ const CreateTodo = ({ addTodo }) => {
 
   const handleTodoAdd = (e) => {
     e.preventDefault();
+
+    // Sjekk om input er tom eller bare whitespace
+    if (inputValue.trim() === "") {
+      return; // Ikke gjør noe hvis tom
+    }
+
     addTodo(inputValue);
     setInputValue("");
   };
