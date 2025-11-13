@@ -43,23 +43,23 @@ function App() {
     loadData();
   }, []);
 
- // Lagre endringer automatisk - men ikke ved første render
-useEffect(() => {
-  // Unngå å lagre tom array ved første render
-  if (todoLists.length === 0) return;
-  
-  async function saveData() {
-    try {
-      await saveTodoLists(todoLists);
-      if (focusedListId !== null) {
-        await setFocusedListId(focusedListId);
+  // Lagre endringer automatisk - men ikke ved første render
+  useEffect(() => {
+    // Unngå å lagre tom array ved første render
+    if (todoLists.length === 0) return;
+
+    async function saveData() {
+      try {
+        await saveTodoLists(todoLists);
+        if (focusedListId !== null) {
+          await setFocusedListId(focusedListId);
+        }
+      } catch (error) {
+        console.error("Feil ved lagring:", error);
       }
-    } catch (error) {
-      console.error("Feil ved lagring:", error);
     }
-  }
-  saveData();
-}, [todoLists, focusedListId]);
+    saveData();
+  }, [todoLists, focusedListId]);
 
   // Toggle et todo-element
   const handleToggleTodo = async (index) => {
@@ -119,11 +119,11 @@ useEffect(() => {
         }}
       >
         <TodoMenu
-  todoLists={todoLists}
-  handleTodoListChange={handleTodoListChange}
-  setCreatingNew={setCreatingNew}
-  focusedListId={focusedListId}
-/>
+          todoLists={todoLists}
+          handleTodoListChange={handleTodoListChange}
+          setCreatingNew={setCreatingNew}
+          focusedListId={focusedListId}
+        />
 
         {focusedTodoList && !creatingNew ? (
           <TodoList
@@ -132,14 +132,16 @@ useEffect(() => {
             toggleTodo={handleToggleTodo}
             addTodo={handleAddTodo}
           />
+        ) : creatingNew ? (
+          <CreateList
+            createNewList={createNewList}
+            setCreatingNew={setCreatingNew}
+          />
         ) : (
-          creatingNew ? (
-            <CreateList createNewList={createNewList} setCreatingNew={setCreatingNew}/> 
-          ) : (  
-              <div style={{ padding: "20px", textAlign: "center" }}>
+          <div style={{ padding: "20px", textAlign: "center" }}>
             <p>Ingen lister enda. Klikk "Ny liste" for å komme i gang!</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

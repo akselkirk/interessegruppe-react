@@ -1,7 +1,6 @@
 // denne filen simulerer api funksjoner
-// det legges på et kunstig "delay" på alle funksjonene som man kan endre 
+// det legges på et kunstig "delay" på alle funksjonene som man kan endre
 // til en mindre tidsenhet om man vil ha appen raskere
-
 
 const STORAGE_KEY = "todolists";
 const FOCUSED_KEY = "focusedListId";
@@ -10,10 +9,10 @@ function delay(ms = 100) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// delay funksjonen lager et nytt promise, som logges til konsollen. 
+// delay funksjonen lager et nytt promise, som logges til konsollen.
 // sjekk konsollen for å se hvordan promis objectet ser ut når staten er fulfilled
-// den kan også ha et resultat som er et object som den gir ut. 
-// For eksempel det som lagres i stored variabelen i funksjonen nedenfor (getTodoLists()) 
+// den kan også ha et resultat som er et object som den gir ut.
+// For eksempel det som lagres i stored variabelen i funksjonen nedenfor (getTodoLists())
 console.log(delay());
 
 //Henter alle todo-lister
