@@ -1,172 +1,115 @@
-import Header from "./components/header/Header";
-import "./App.css";
 import { useEffect, useState } from "react";
+import Header from "./components/header/Header";
 import TodoList from "./components/todo_list/TodoList";
 import TodoMenu from "./components/todo_menu/TodoMenu";
-// import BrukEffekt from "./components/eksempler_fra_gjennomgang/useeffect_/BrukEffekt";
-// import States from "./components/eksempler_fra_gjennomgang/states/States";
+import "./App.css";
+//Lar oss fake api
+import {
+  getTodoLists,
+  saveTodoLists,
+  getFocusedListId,
+  setFocusedListId,
+  toggleTodo,
+  addTodoToList,
+  addTodoList,
+  deleteTodoList,
+  updateTodoListName,
+  deleteTodoFromList,
+} from "./fakeApi";
 
 function App() {
-  const [todoLists, setTodoLists] = useState([
-    {
-      id: 1,
-      title: "Handletur 🛒",
-      focused: true,
-      todos: [
-        { checked: false, todoDesc: "Melk" },
-        { checked: false, todoDesc: "Brød" },
-        { checked: true, todoDesc: "Egg" },
-        { checked: false, todoDesc: "Ost" },
-        { checked: false, todoDesc: "Kaffe" },
-      ],
-    },
-    {
-      id: 2,
-      title: "Lære React 💻",
-      focused: false,
-      todos: [
-        { checked: true, todoDesc: "Installere Node.js" },
-        { checked: true, todoDesc: "Lage første app med create-react-app" },
-        { checked: true, todoDesc: "Forstå komponenter" },
-        { checked: false, todoDesc: "Lære hooks (useState, useEffect)" },
-        { checked: false, todoDesc: "Forstå props og state" },
-        { checked: false, todoDesc: "Bygge en todo-app" },
-      ],
-    },
-    {
-      id: 3,
-      title: "Treningsøkter denne uken 💪",
-      focused: false,
-      todos: [
-        { checked: true, todoDesc: "Mandag: Beinstyrke" },
-        { checked: true, todoDesc: "Tirsdag: Løping 5km" },
-        { checked: false, todoDesc: "Onsdag: Yoga" },
-        { checked: false, todoDesc: "Torsdag: Svømming" },
-        { checked: false, todoDesc: "Fredag: Styrketrening overkropp" },
-        { checked: false, todoDesc: "Lørdag: Langtur på sykkel" },
-      ],
-    },
-    {
-      id: 4,
-      title: "Helgeprosjekt 🔨",
-      focused: false,
-      todos: [
-        { checked: false, todoDesc: "Kjøpe maling" },
-        { checked: false, todoDesc: "Tape vinduer og lister" },
-        { checked: false, todoDesc: "Male soverommet" },
-        { checked: false, todoDesc: "Rydde garasjen" },
-        { checked: false, todoDesc: "Fikse den dryppende kranen" },
-      ],
-    },
-    {
-      id: 5,
-      title: "Arbeid - Prioriteringer 📋",
-      focused: false,
-      todos: [
-        { checked: true, todoDesc: "Fullføre kundeprosjekt A" },
-        { checked: false, todoDesc: "Code review for teamet" },
-        { checked: false, todoDesc: "Oppdatere dokumentasjon" },
-        { checked: false, todoDesc: "Planlegge neste sprint" },
-        { checked: false, todoDesc: "1-til-1 møte med sjefen" },
-        { checked: false, todoDesc: "Fikse bug i produksjon" },
-      ],
-    },
-    {
-      id: 6,
-      title: "Arbeid - Prioriteringer 📋",
-      focused: false,
-      todos: [
-        { checked: true, todoDesc: "Fullføre kundeprosjekt A" },
-        { checked: false, todoDesc: "Code review for teamet" },
-        { checked: false, todoDesc: "Oppdatere dokumentasjon" },
-        { checked: false, todoDesc: "Planlegge neste sprint" },
-        { checked: false, todoDesc: "1-til-1 møte med sjefen" },
-        { checked: false, todoDesc: "Fikse bug i produksjon" },
-      ],
-    },
-    {
-      id: 7,
-      title: "Arbeid - Prioriteringer 📋",
-      focused: false,
-      todos: [
-        { checked: true, todoDesc: "Fullføre kundeprosjekt A" },
-        { checked: false, todoDesc: "Code review for teamet" },
-        { checked: false, todoDesc: "Oppdatere dokumentasjon" },
-        { checked: false, todoDesc: "Planlegge neste sprint" },
-        { checked: false, todoDesc: "1-til-1 møte med sjefen" },
-        { checked: false, todoDesc: "Fikse bug i produksjon" },
-      ],
-    },
-  ]);
+  const [todoLists, setTodoLists] = useState([]);
+  const [focusedListId, setFocusedId] = useState(null);
 
-  // Lagrer bare ID-en, ikke hele objektet
-  const [focusedListId, setFocusedListId] = useState(() => {
-    const saved = localStorage.getItem("focusedListId");
-    return saved ? JSON.parse(saved) : 1;
-  });
+  // Hent data ved første innlasting
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const storedLists = await getTodoLists();
+        const storedFocus = await getFocusedListId();
 
-  // Finn den fokuserte listen fra todoLists
-  const focusedTodoList =
-    todoLists.find((list) => list.id === focusedListId) || todoLists[0];
+        setTodoLists(storedLists);
 
-  // Toggle en todo
-  const toggleTodo = (changeIndex) => {
-    setTodoLists(
-      todoLists.map((list) =>
-        list.id === focusedListId
-          ? {
-              ...list,
-              todos: list.todos.map((todo, i) =>
-                i === changeIndex ? { ...todo, checked: !todo.checked } : todo
-              ),
-            }
-          : list
-      )
-    );
+        // Sett fokus til første liste hvis det finnes lister
+        if (storedLists.length > 0) {
+          setFocusedId(storedFocus || storedLists[0].id);
+        }
+      } catch (error) {
+        console.error("Klarte ikke å laste data:", error);
+      }
+    }
+    loadData();
+  }, []);
+
+  // Lagre endringer automatisk
+  useEffect(() => {
+    async function saveData() {
+      try {
+        await saveTodoLists(todoLists);
+        if (focusedListId !== null) {
+          await setFocusedListId(focusedListId);
+        }
+      } catch (error) {
+        console.error("Feil ved lagring:", error);
+      }
+    }
+    saveData();
+  }, [todoLists, focusedListId]);
+
+  // Toggle et todo-element
+  const handleToggleTodo = async (index) => {
+    try {
+      const updatedLists = await toggleTodo(focusedListId, index);
+      setTodoLists(updatedLists);
+    } catch (error) {
+      console.error("Klarte ikke å endre todo:", error);
+    }
   };
 
   // Bytt hvilken liste som er fokusert
-  const handleTodoListChange = (changeIndex) => {
-    const updatedLists = todoLists.map((todolist, i) => ({
-      ...todolist,
-      focused: i === changeIndex,
-    }));
-
-    setTodoLists(updatedLists);
-    setFocusedListId(todoLists[changeIndex].id);
+  const handleTodoListChange = async (index) => {
+    try {
+      const newId = todoLists[index].id;
+      setFocusedId(newId);
+      await setFocusedListId(newId);
+      const updatedLists = todoLists.map((list, i) => ({
+        ...list,
+        focused: i === index,
+      }));
+      setTodoLists(updatedLists);
+    } catch (error) {
+      console.error("Klarte ikke å bytte liste:", error);
+    }
   };
 
-  // Legg til en ny todo
-  const addTodo = (todoDescription) => {
-    setTodoLists(
-      todoLists.map((list) =>
-        list.id === focusedListId
-          ? {
-              ...list,
-              todos: [
-                ...list.todos,
-                { checked: false, todoDesc: todoDescription },
-              ],
-            }
-          : list
-      )
-    );
+  // Legg til ny todo
+  const handleAddTodo = async (desc) => {
+    try {
+      const updatedLists = await addTodoToList(focusedListId, desc);
+      setTodoLists(updatedLists);
+    } catch (error) {
+      console.error("Klarte ikke å legge til todo:", error);
+    }
   };
 
-  // Lagre til localStorage
-  useEffect(() => {
-    localStorage.setItem("todolists", JSON.stringify(todoLists));
-    localStorage.setItem("focusedListId", JSON.stringify(focusedListId));
-  }, [todoLists, focusedListId]);
+  const createNewList = async (listName = "Ny liste") => {
+    try {
+      const updatedLists = await addTodoList(listName);
+      setTodoLists(updatedLists);
+
+      // Finn ID-en til den nye listen (den siste i arrayet)
+      const newList = updatedLists[updatedLists.length - 1];
+      setFocusedId(newList.id);
+    } catch (error) {
+      console.error("Klarte ikke å lage ny liste:", error);
+    }
+  };
+
+  // Finn nåværende liste
+  const focusedTodoList = todoLists.find((list) => list.id === focusedListId);
 
   return (
     <div className="App">
-      {/*Eksempel fra gjennomgang om states. Fjern kommenteringen under for å kunne se komponenten. */}
-      {/* <States />  */}
-
-      {/* Eksempel fra gjennomgang om useEffect og mapfunksjonen. Fjern kommenteringen under for å kunne se komponenten. */}
-      {/* <BrukEffekt /> */}
-
       <Header />
       <div
         style={{
@@ -178,13 +121,21 @@ function App() {
         <TodoMenu
           todoLists={todoLists}
           handleTodoListChange={handleTodoListChange}
+          createNewList={createNewList}
         />
-        <TodoList
-          title={focusedTodoList.title}
-          todos={focusedTodoList.todos}
-          toggleTodo={toggleTodo}
-          addTodo={addTodo}
-        />
+
+        {focusedTodoList ? (
+          <TodoList
+            title={focusedTodoList.title || focusedTodoList.name}
+            todos={focusedTodoList.todos}
+            toggleTodo={handleToggleTodo}
+            addTodo={handleAddTodo}
+          />
+        ) : (
+          <div style={{ padding: "20px", textAlign: "center" }}>
+            <p>Ingen lister enda. Klikk "Ny liste" for å komme i gang!</p>
+          </div>
+        )}
       </div>
     </div>
   );
