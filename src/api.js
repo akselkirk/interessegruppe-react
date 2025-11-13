@@ -1,3 +1,6 @@
+// Her kommer det etterhvert mulighet for å bruke api for å lagre todos i en felles database for gruppen
+
+
 // src/api.js
 const API_URL = 'http://localhost:3001';
 
