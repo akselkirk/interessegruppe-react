@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "./components/header/Header";
 import TodoList from "./components/todo_list/TodoList";
 import TodoMenu from "./components/todo_menu/TodoMenu";
+import CreateList from "./components/create_list/CreateList";
 import "./App.css";
 //Lar oss fake api
 import {
@@ -20,6 +21,7 @@ import {
 function App() {
   const [todoLists, setTodoLists] = useState([]);
   const [focusedListId, setFocusedId] = useState(null);
+  const [creatingNew, setCreatingNew] = useState(false);
 
   // Hent data ved første innlasting
   useEffect(() => {
@@ -41,20 +43,23 @@ function App() {
     loadData();
   }, []);
 
-  // Lagre endringer automatisk
-  useEffect(() => {
-    async function saveData() {
-      try {
-        await saveTodoLists(todoLists);
-        if (focusedListId !== null) {
-          await setFocusedListId(focusedListId);
-        }
-      } catch (error) {
-        console.error("Feil ved lagring:", error);
+ // Lagre endringer automatisk - men ikke ved første render
+useEffect(() => {
+  // Unngå å lagre tom array ved første render
+  if (todoLists.length === 0) return;
+  
+  async function saveData() {
+    try {
+      await saveTodoLists(todoLists);
+      if (focusedListId !== null) {
+        await setFocusedListId(focusedListId);
       }
+    } catch (error) {
+      console.error("Feil ved lagring:", error);
     }
-    saveData();
-  }, [todoLists, focusedListId]);
+  }
+  saveData();
+}, [todoLists, focusedListId]);
 
   // Toggle et todo-element
   const handleToggleTodo = async (index) => {
@@ -72,11 +77,6 @@ function App() {
       const newId = todoLists[index].id;
       setFocusedId(newId);
       await setFocusedListId(newId);
-      const updatedLists = todoLists.map((list, i) => ({
-        ...list,
-        focused: i === index,
-      }));
-      setTodoLists(updatedLists);
     } catch (error) {
       console.error("Klarte ikke å bytte liste:", error);
     }
@@ -119,12 +119,13 @@ function App() {
         }}
       >
         <TodoMenu
-          todoLists={todoLists}
-          handleTodoListChange={handleTodoListChange}
-          createNewList={createNewList}
-        />
+  todoLists={todoLists}
+  handleTodoListChange={handleTodoListChange}
+  setCreatingNew={setCreatingNew}
+  focusedListId={focusedListId}
+/>
 
-        {focusedTodoList ? (
+        {focusedTodoList && !creatingNew ? (
           <TodoList
             title={focusedTodoList.title || focusedTodoList.name}
             todos={focusedTodoList.todos}
@@ -132,10 +133,13 @@ function App() {
             addTodo={handleAddTodo}
           />
         ) : (
-          <div style={{ padding: "20px", textAlign: "center" }}>
+          creatingNew ? (
+            <CreateList createNewList={createNewList} setCreatingNew={setCreatingNew}/> 
+          ) : (  
+              <div style={{ padding: "20px", textAlign: "center" }}>
             <p>Ingen lister enda. Klikk "Ny liste" for å komme i gang!</p>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

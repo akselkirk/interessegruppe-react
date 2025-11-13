@@ -13,15 +13,19 @@
 .menuitem {
   padding: 0.3rem;
   border-radius: 0.5rem;
+  background-color: rgba(95, 158, 160, 0.2);
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+}
 
-  &:hover {
-    background-color: rgb(95, 158, 160, 0.5);
-  }
+.menuitem:hover {
+  background-color: rgba(95, 158, 160, 0.5);
 }
 
 .focused {
   background-color: cadetblue;
 }
+
 
 h1 {
   margin-bottom: 0.2rem;
