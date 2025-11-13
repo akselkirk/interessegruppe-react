@@ -1,25 +1,25 @@
 import React from "react";
 import styles from "./todo_menu.module.css";
 
-const TodoMenu = ({ todoLists, handleTodoListChange, toggleCreate }) => {
+const TodoMenu = ({ todoLists, handleTodoListChange, setCreatingNew, focusedListId }) => {
+  
+  
+
   return (
     <div className={styles.menu}>
       <h1>Dine lister</h1>
-      <button onClick={() => {}} className={styles.newListButton}>
-        + Ny liste
+      <button onClick={() => setCreatingNew(true)} className={styles.newListButton}>
+        Ny liste +
       </button>
       <div className={styles.list}>
         {todoLists.map((todolist, index) => {
           return (
             <div
-              className={
-                styles.menuitem + (todolist.focused ? " " + styles.focused : "")
-              }
-              onClick={(e) => {
-                handleTodoListChange(index);
-              }}
+              key={todolist.id}
+              className={`${styles.menuitem} ${todolist.id === focusedListId ? styles.focused : ""}`}
+              onClick={() => handleTodoListChange(index)}
             >
-              {todolist.title}
+              {todolist.title || todolist.name}
             </div>
           );
         })}
