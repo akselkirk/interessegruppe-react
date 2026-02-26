@@ -23,19 +23,22 @@ const CreateList = ({ createNewList, setCreatingNew }) => {
   return (
     <div className={styles.createList}>
       <h1>Opprett ny liste</h1>
-      <form onSubmit={handleListAdd}>
-        <label>Listenavn: </label>
+      <form className={styles.form} onSubmit={handleListAdd}>
+        <label className={styles.label}>Listenavn:</label>
         <input
+          className={styles.input}
           placeholder="Skriv listenavn"
           value={listNameInput}
           onChange={(e) => {
             setListNameInput(e.target.value);
           }}
         />
-        <button type="submit">Opprett</button>
-        <button type="button" onClick={() => setCreatingNew(false)}>
-          Avbryt
-        </button>
+        <div className={styles.buttonGroup}>
+          <button className={styles.submitButton} type="submit">Opprett</button>
+          <button className={styles.cancelButton} type="button" onClick={() => setCreatingNew(false)}>
+            Avbryt
+          </button>
+        </div>
       </form>
     </div>
   );

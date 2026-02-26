@@ -150,13 +150,7 @@ const App = () => {
   ) : (
     <div className="App">
       <Header />
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          justifyContent: "space-around",
-        }}
-      >
+      <div className="content">
         <TodoMenu
           todoLists={todoLists}
           // handleTodoListChange={handleTodoListChange}
@@ -177,7 +171,7 @@ const App = () => {
             setCreatingNew={setCreatingNew}
           />
         ) : (
-          <div style={{ padding: "20px", textAlign: "center" }}>
+          <div className="emptyState">
             <p>Ingen lister enda. Klikk "Ny liste" for å komme i gang!</p>
           </div>
         )}

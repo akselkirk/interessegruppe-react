@@ -4,4 +4,14 @@
   align-items: start;
   height: 75svh;
   width: 60%;
+  padding: 1rem 1.5rem;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.todolist h1 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #222;
+  font-size: 1.5rem;
 }

@@ -2,6 +2,18 @@
   text-align: center;
 }
 
+.content {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.emptyState {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
 /* .App-logo {
   height: 40vmin;
   pointer-events: none;
